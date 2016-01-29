@@ -8,7 +8,7 @@ pkgdesc="Export templates for the stable release of the Godot engine 1.1"
 url="http://www.godotengine.org"
 license=('MIT')
 arch=('i686' 'x86_64')
-makedepends=('scons' 'mingw-w64-binutils' 'mingw-w64-crt' 'mingw-w64-gcc' 'mingw-w64-headers' 'mingw-w64-headers-bootstrap' 'mingw-w64-winpthreads' 'upx' 'emscripten')
+makedepends=('scons' 'mingw-w64-binutils' 'mingw-w64-crt' 'mingw-w64-gcc' 'mingw-w64-headers' 'mingw-w64-headers-bootstrap' 'mingw-w64-winpthreads' 'upx') #'emscripten'
 depends=('glu' 'libxcursor' 'alsa-lib' 'freetype2' 'mesa')
 optdepends=('godot: Cannot export without it')
 conflicts=('godot-export-git' 'godot-git')
@@ -94,21 +94,23 @@ build() {
     #Currently disabled by Godot
 
     #HTML5
-    export EMSCRIPTEN_ROOT=/usr/lib/emscripten
+    #Currently broken per https://github.com/godotengine/godot/issues/3510
+
+    #export EMSCRIPTEN_ROOT=/usr/lib/emscripten
     
-    scons -j $cores platform=javascript tools=no target=release
-    scons -j $cores platform=javascript tools=no target=release_debug
+    #scons -j $cores platform=javascript tools=no target=release
+    #scons -j $cores platform=javascript tools=no target=release_debug
 
-    cp $bindir/godot.javascript.opt.html $bindir/godot.html
-    cp $bindir/godot.javascript.opt.js $bindir/godot.js
-    cp $tooldir/html_fs/filesystem.js $bindir/filesystem.js
+    #cp $bindir/godot.javascript.opt.html $bindir/godot.html
+    #cp $bindir/godot.javascript.opt.js $bindir/godot.js
+    #cp $tooldir/html_fs/filesystem.js $bindir/filesystem.js
 
-    zip $tempdir/javascript_release.zip $bindir/godot.html $bindir/godot.js $bindir/filesystem.js
+    #zip $tempdir/javascript_release.zip $bindir/godot.html $bindir/godot.js $bindir/filesystem.js
 
-    cp $bindir/godot.javascript.opt.debug.html $bindir/godot.html
-    cp $bindir/godot.javascript.opt.debug.js $bindir/godot.js
+    #cp $bindir/godot.javascript.opt.debug.html $bindir/godot.html
+    #cp $bindir/godot.javascript.opt.debug.js $bindir/godot.js
 
-    zip $tempdir/javascript_debug.zip $bindir/godot.html $bindir/godot.js $bindir/filesystem.js
+    #zip $tempdir/javascript_debug.zip $bindir/godot.html $bindir/godot.js $bindir/filesystem.js
 
     
     
