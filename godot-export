@@ -19,6 +19,8 @@ else
   _arch=('32')
 fi
 
+tempdir="/home/$USER/.godot/templates/"
+
 source=(
 	"https://github.com/godotengine/godot/archive/${pkgver}-stable.tar.gz"
         )
@@ -33,7 +35,6 @@ build() {
     sed -n '/\/* Copyright/,/IN THE SOFTWARE./p' main/main.cpp | sed 's/\/\*//' | sed 's/\*\///' > LICENSE
 
     cores=$(nproc)
-    tempdir="/home/$USER/.godot/templates/"
     bindir=("${srcdir}"/${_rname}-${pkgver}-stable/bin)
     tooldir=("${srcdir}"/${_rname}-${pkgver}-stable/tools)
 
@@ -62,8 +63,8 @@ build() {
     fi
 
     #Windows
-    export MINGW64_PREFIX="x86_64-w64-mingw32-"  
     export MINGW32_PREFIX="i686-w64-mingw32-"
+    export MINGW64_PREFIX="x86_64-w64-mingw32-"  
 
     scons -j $cores platform=windows tools=no target=release bits=32         #windows_32_release.exe
     scons -j $cores platform=windows tools=no target=release_debug bits=32   #windows_32_debug.exe
@@ -119,19 +120,25 @@ build() {
 package() {
 
     #Linux
-    upx $tempdir/linux_x11_64_release
-    upx $tempdir/linux_x11_64_debug
-    upx $tempdir/linux_x11_32_release
-    upx $tempdir/linux_x11_32_debug
+    if test _arch == '32'; then
+        upx $tempdir/linux_x11_32_release
+        upx $tempdir/linux_x11_32_debug
+    else    
+        upx $tempdir/linux_x11_64_release
+        upx $tempdir/linux_x11_64_debug
+    fi
 
     #Linux Server
-    upx $tempdir/linux_server_64
-    upx $tempdir/linux_server_32
+    if test _arch == '32'; then
+        upx $tempdir/linux_server_32
+    else
+        upx $tempdir/linux_server_64
+    fi
 
     #Windows
-    x86_64-w64-mingw32-strip $tempdir/windows_64_release.exe
-    x86_64-w64-mingw32-strip $tempdir/windows_64_debug.exe
     upx $tempdir/windows_32_debug.exe
     upx $tempdir/windows_32_release.exe
+    x86_64-w64-mingw32-strip $tempdir/windows_64_release.exe
+    x86_64-w64-mingw32-strip $tempdir/windows_64_debug.exe
 }
 
