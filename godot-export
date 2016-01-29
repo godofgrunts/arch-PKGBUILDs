@@ -1,16 +1,17 @@
-# Maintainer: Ryan Whited <dergottdergrunten@gmail.com> @god_of_grunts
+# Maintainer: Ryan Whited <dergottdergrunten at gmail dot com> @god_of_grunts
 
 pkgname=godot-export
-package=godot
+_rname=godot
 pkgver=1.1
-pkgrel=4
-pkgdesc="Export templates for the stable release of the Godot engine 1.x"
+pkgrel=1
+pkgdesc="Export templates for the stable release of the Godot engine 1.1"
+#url="http://www.godotengine.org"
 license=('MIT')
 arch=('i686' 'x86_64')
 makedepends=('scons' 'mingw-w64-binutils' 'mingw-w64-crt' 'mingw-w64-gcc' 'mingw-w64-headers' 'mingw-w64-headers-bootstrap' 'mingw-w64-winpthreads' 'upx' 'emscripten')
 depends=('glu' 'libxcursor' 'alsa-lib' 'freetype2' 'mesa')
-optdepends=('godot')
-conflicts=("godot-export-git")
+optdepends=('godot: Cannot export without it')
+conflicts=('godot-export-git' 'godot-git')
 _arch=''
 if test "$CARCH" == x86_64; then
   _arch=('64')
@@ -27,15 +28,16 @@ build() {
     export MINGW64_PREFIX="x86_64-w64-mingw32-"  
     export MINGW32_PREFIX="i686-w64-mingw32-"
 
-    cd "${srcdir}"/${package}-${pkgver}-stable
+    cd "${srcdir}"/${_rname}-${pkgver}-stable
+
+    sed -n '/\/* Copyright/,/IN THE SOFTWARE./p' main/main.cpp | sed 's/\/\*//' | sed 's/\*\///' > LICENSE
 
     cores=$(nproc)
     tempdir="/home/$USER/.godot/templates/"
-    bindir=("${srcdir}"/${package}-${pkgver}-stable/bin)
-    tooldir=("${srcdir}"/${package}-${pkgver}-stable/tools)
+    bindir=("${srcdir}"/${_rname}-${pkgver}-stable/bin)
+    tooldir=("${srcdir}"/${_rname}-${pkgver}-stable/tools)
 
-    rm -r $tempdir || echo No directory to remove
-    mkdir $tempdir
+    mkdir $tempdir || echo $tempdir does not need to be made
 
     #linux
     if test _arch == '32'; then
@@ -52,10 +54,10 @@ build() {
 
     #linux-server
     if test _arch == '32'; then
-        scons -j $cores platform=server target=release_debug bits=32
+        scons -j $cores platform=server target=release_debug tools=no bits=32
         cp $bindir/godot_server.server.opt.debug.32 $tempdir/linux_server_32
     else
-        scons -j $cores platform=server target=release_debug bits=64
+        scons -j $cores platform=server target=release_debug tools=no bits=64
         cp $bindir/godot_server.server.opt.debug.64 $tempdir/linux_server_64
     fi
 
