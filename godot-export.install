@@ -1,0 +1,15 @@
+post_install() {
+
+echo "Due to certain things (missing documentation and complexity) this PKGBUILD only creates templates for Linux and Windows."
+
+echo "Please see https://github.com/godotengine/godot/wiki/compiling_batch_templates, https://github.com/godotengine/godot/wiki/export_android and https://github.com/godotengine/godot/issues/3510"
+
+echo "In order for the installation to be complete, please run the following commands:"
+
+echo "mkdir -p /home/$USER/.godot/templates"
+
+echo "cp /usr/lib/godot/templates/* /home/$USER/.godot/templates"
+
+echo "Please also remember that you need godot 1.1 from AUR to be installed before any of this is actually useful."
+
+}
