@@ -12,7 +12,7 @@ makedepends=('scons' 'mingw-w64-binutils' 'mingw-w64-crt' 'mingw-w64-gcc' 'mingw
 depends=('glu' 'libxcursor' 'alsa-lib' 'freetype2' 'mesa')
 optdepends=('godot: Cannot export without it')
 conflicts=('godot-export-git' 'godot-git')
-install=godot-export.install
+install=$pkgname.install
 _arch=''
 if test "$CARCH" == x86_64; then
   _arch=('64')
@@ -20,13 +20,11 @@ else
   _arch=('32')
 fi
 
-tempdir="/usr/lib/godot/templates/"
-bindir=("${srcdir}"/${_rname}-${pkgver}-stable/bin)
-tooldir=("${srcdir}"/${_rname}-${pkgver}-stable/tools)
+_tempdir="/usr/lib/godot/templates/"
+_bindir=("${srcdir}"/${_rname}-${pkgver}-stable/bin)
+_tooldir=("${srcdir}"/${_rname}-${pkgver}-stable/tools)
 
-source=(
-	"https://github.com/godotengine/godot/archive/${pkgver}-stable.tar.gz"
-        )
+source=("https://github.com/godotengine/godot/archive/${pkgver}-stable.tar.gz")
 md5sums=('87eb2fc3518ce7a27957fada1ba003e9')
 
 build() {
@@ -34,7 +32,7 @@ build() {
     export MINGW32_PREFIX="i686-w64-mingw32-"
     #export EMSCRIPTEN_ROOT=/usr/lib/emscripten
     cores=$(nproc)
-    mkdir $tempdir || echo $tempdir does not need to be made
+    mkdir $_tempdir || echo $_tempdir does not need to be made
     
     cd "${srcdir}"/${_rname}-${pkgver}-stable
 
@@ -85,50 +83,50 @@ build() {
 
 package() {
 
-    install -D -m644 LICENSE.md "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+    install -D -m644 LICENSE.md "${pkgdir}/usr/share/licenses/${_rname}/LICENSE"
   
     #Linux
     if test _arch == '32'; then
-        install -D -m755 $bindir/godot.x11.opt.32 $tempdir/linux_x11_32_release
-        install -D -m755 $bindir/godot.x11.opt.debug.32 $tempdir/linux_x11_32_debug
-        upx $tempdir/linux_x11_32_release
-        upx $tempdir/linux_x11_32_debug
+        install -D -m755 $_bindir/godot.x11.opt.32 $_tempdir/linux_x11_32_release
+        install -D -m755 $_bindir/godot.x11.opt.debug.32 $_tempdir/linux_x11_32_debug
+        upx $_tempdir/linux_x11_32_release
+        upx $_tempdir/linux_x11_32_debug
     else    
-        install -D -m755 $bindir/godot.x11.opt.64 $tempdir/linux_x11_64_release
-        install -D -m755 $bindir/godot.x11.opt.debug.64 $tempdir/linux_x11_64_debug
-        upx $tempdir/linux_x11_64_release
-        upx $tempdir/linux_x11_64_debug
+        install -D -m755 $_bindir/godot.x11.opt.64 $_tempdir/linux_x11_64_release
+        install -D -m755 $_bindir/godot.x11.opt.debug.64 $_tempdir/linux_x11_64_debug
+        upx $_tempdir/linux_x11_64_release
+        upx $_tempdir/linux_x11_64_debug
     fi
 
     #Linux Server
     if test _arch == '32'; then
-        install -D -m755 $bindir/godot_server.server.opt.debug.32 $tempdir/linux_server_32
-        upx $tempdir/linux_server_32
+        install -D -m755 $_bindir/godot_server.server.opt.debug.32 $_tempdir/linux_server_32
+        upx $_tempdir/linux_server_32
     else
-        install -D -m755 $bindir/godot_server.server.opt.debug.64 $tempdir/linux_server_64
-        upx $tempdir/linux_server_64
+        install -D -m755 $_bindir/godot_server.server.opt.debug.64 $_tempdir/linux_server_64
+        upx $_tempdir/linux_server_64
     fi
 
     #Windows
-    install -D -m755 $bindir/godot.windows.opt.64.exe $tempdir/windows_64_release.exe
-    install -D -m755 $bindir/godot.windows.opt.debug.64.exe $tempdir/windows_64_debug.exe
-    install -D -m755 $bindir/godot.windows.opt.32.exe $tempdir/windows_32_release.exe
-    install -D -m755 $bindir/godot.windows.opt.debug.32.exe $tempdir/windows_32_debug.exe
-    upx $tempdir/windows_32_debug.exe
-    upx $tempdir/windows_32_release.exe
-    x86_64-w64-mingw32-strip $tempdir/windows_64_release.exe
-    x86_64-w64-mingw32-strip $tempdir/windows_64_debug.exe
+    install -D -m755 $_bindir/godot.windows.opt.64.exe $_tempdir/windows_64_release.exe
+    install -D -m755 $_bindir/godot.windows.opt.debug.64.exe $_tempdir/windows_64_debug.exe
+    install -D -m755 $_bindir/godot.windows.opt.32.exe $_tempdir/windows_32_release.exe
+    install -D -m755 $_bindir/godot.windows.opt.debug.32.exe $_tempdir/windows_32_debug.exe
+    upx $_tempdir/windows_32_debug.exe
+    upx $_tempdir/windows_32_release.exe
+    x86_64-w64-mingw32-strip $_tempdir/windows_64_release.exe
+    x86_64-w64-mingw32-strip $_tempdir/windows_64_debug.exe
 
     #HTML5
-    #cp $bindir/godot.javascript.opt.html $bindir/godot.html
-    #cp $bindir/godot.javascript.opt.js $bindir/godot.js
-    #cp $tooldir/html_fs/filesystem.js $bindir/filesystem.js
+    #cp $_bindir/godot.javascript.opt.html $_bindir/godot.html
+    #cp $_bindir/godot.javascript.opt.js $_bindir/godot.js
+    #cp $_tooldir/html_fs/filesystem.js $_bindir/filesystem.js
 
-    #zip $tempdir/javascript_release.zip $bindir/godot.html $bindir/godot.js $bindir/filesystem.js
+    #zip $_tempdir/javascript_release.zip $_bindir/godot.html $_bindir/godot.js $_bindir/filesystem.js
 
-    #cp $bindir/godot.javascript.opt.debug.html $bindir/godot.html
-    #cp $bindir/godot.javascript.opt.debug.js $bindir/godot.js
+    #cp $_bindir/godot.javascript.opt.debug.html $_bindir/godot.html
+    #cp $_bindir/godot.javascript.opt.debug.js $_bindir/godot.js
 
-    #zip $tempdir/javascript_debug.zip $bindir/godot.html $bindir/godot.js $bindir/filesystem.js
+    #zip $_tempdir/javascript_debug.zip $_bindir/godot.html $_bindir/godot.js $_bindir/filesystem.js
 }
 
