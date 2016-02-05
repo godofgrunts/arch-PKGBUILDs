@@ -23,5 +23,5 @@ post_upgrade() {
 }
 
 post_remove() {
-  echo "You'll need to remove the files located in /home/\$USER/.godot/templates 
+  echo "You will need to remove the files located in /home/\$USER/.godot/templates" 
 }
