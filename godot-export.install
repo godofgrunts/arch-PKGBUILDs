@@ -12,6 +12,10 @@ echo "cp /usr/lib/godot/templates/* /home/\$USER/.godot/templates"
 
 echo "Please also remember that you need godot 1.1 from AUR to be installed before any of this is actually useful."
 
+echo "Or you could symlink it and never worry about it again."
+
+echo "ln -s /usr/lib/godot/templates /home/\$USER/.godot/templates"
+
 }
 
 post_upgrade() {
